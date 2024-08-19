@@ -210,7 +210,9 @@ namespace {
         printout(ERROR,"Geant4VolumeManager"," New   G4 path: %s",Geant4GeometryInfo::placementPath(path).c_str());
       if ( !nodes.empty() )
         printout(ERROR,"Geant4VolumeManager","     TGeo path: %s",detail::tools::placementPath(nodes,false).c_str());
+      
       printout(ERROR,"Geant4VolumeManager",  " Offend.VolIDs: %s",detail::tools::toString(ro.idSpec(),ids,code).c_str());
+
       throw runtime_error("Failed to populate Geant4 volume manager!");
     }
   };

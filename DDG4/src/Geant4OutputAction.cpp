@@ -55,21 +55,40 @@ void Geant4OutputAction::begin(const G4Event* /* event */) {
 
 /// End-of-event callback
 void Geant4OutputAction::end(const G4Event* evt) {
-  OutputContext < G4Event > ctxt(evt);
+  
+  OutputContext <G4Event> ctxt(evt);
+  
   G4HCofThisEvent* hce = evt->GetHCofThisEvent();
+  
   if ( hce )  {
+
     int nCol = hce->GetNumberOfCollections();
+
     try  {
+  
       m_truth = context()->event().extension<Geant4ParticleMap>(false);
+  
       if ( m_truth && !m_truth->isValid() )  {
         m_truth = 0;
         printout(WARNING,name(),"+++ [Event:%d] No valid MC truth info present. "
                  "Is a Particle handler installed ?",evt->GetEventID());
       }
+  
       try  {
+
+std::cout << std::endl;
+std::cout << "******* Using DD4hep standard saveEvent !!! *********" << std::endl;
+std::cout << std::endl;
+
         saveEvent(ctxt);
         for (int i = 0; i < nCol; ++i) {
+
           G4VHitsCollection* hc = hce->GetHC(i);
+
+std::cout << std::endl;
+std::cout << "******* Using DD4hep standard saveCollection !!! *********" << std::endl;
+std::cout << std::endl;
+
           saveCollection(ctxt, hc);
         }
       }
@@ -83,8 +102,16 @@ void Geant4OutputAction::end(const G4Event* evt) {
                  evt->GetEventID());
         if ( m_errorFatal ) throw;
       }
+
+std::cout << std::endl;
+std::cout << "******* Using DD4hep standard commit !!! *********" << std::endl;
+std::cout << std::endl;
+
       commit(ctxt);
+
     }
+
+
     catch(const exception& e)   {
       printout(ERROR,name(),"+++ [Event:%d] Exception while saving event:%s",
                evt->GetEventID(),e.what());
@@ -95,12 +122,18 @@ void Geant4OutputAction::end(const G4Event* evt) {
                evt->GetEventID());
       if ( m_errorFatal ) throw;
     }
+
     m_truth = 0;
     return;
+
   }
+  
   printout(WARNING,"Geant4OutputAction",
            "+++ The value of G4HCofThisEvent is NULL. No collections saved!");
 }
+
+
+
 
 /// Commit data at end of filling procedure
 void Geant4OutputAction::commit(OutputContext<G4Event>& /* ctxt */) {
